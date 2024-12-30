@@ -1,0 +1,23 @@
+{
+  "name": "api_system",
+  "version": "1.0.0",
+  "description": "a random api system",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "Rishabh Ravindran",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}
