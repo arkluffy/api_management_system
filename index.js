@@ -7,8 +7,8 @@ const db = new QuickDB();
 const port = 3000
 
 app.set("view engine", "ejs");
-const a = "ass"
-app.get(`/${a}`,(req,res) =>{
+
+app.get(`/`,(req,res) =>{
     res.render('index.ejs')
 })
 
