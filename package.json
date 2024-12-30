@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "a random api system",
   "main": "index.js",
+  "type":"module",
   "scripts": {
-    "test": "node index.js"
+    "test": "node test.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -16,8 +18,12 @@
   "author": "Rishabh Ravindran",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.9",
+    "better-sqlite3": "^11.7.0",
     "chalk": "^4.1.0",
     "ejs": "^3.1.10",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "quick.db": "^9.1.7"
   }
 }
