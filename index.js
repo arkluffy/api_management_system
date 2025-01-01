@@ -17,30 +17,52 @@ app.get(`/`,(req,res) =>{
 // db.set('api',[])
 // db.set('newendpoints',[])
     await db.get("api").then(async api => {
-        for (var i = 0; i < api.length; i++) {
-            await db.get(api[i]).then(data => {
-                    app.get(`/${api[i]}`,(req,res) =>{
-                        if(data.length === 0){
-                            res.status(200).json({success: true,data:null})
-                        }else{
-                            res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
-                        }
-                    })
-            })
+        if(api == null){
+            console.log('no api in db')
+        }else{
+            for (var i = 0; i < api.length; i++) {
+                app.get(`/${api[i]}`,async (req,res) =>{
+                    await db.get(`${api[i]}`).then(data => {
+                    if(data.length === 0){
+                        res.status(200).json({success: true,data:null})
+                    }else{
+                        res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
+                    }
+                })
+                })
+    }
         }
     })
 
 
 app.post(`/createendpoint`,async (req,res) => {
-    db.get('newendpoints').then(async newapi => {
+    console.log(req.body.endpoint)
         db.get("api").then(async api => {
-            if(newapi.includes(req.body.endpoint) || api.includes(req.body.endpoint)){
+            if(api == null){
+                createendpoint(req.body.endpoint)
+                res.status(200).json({success:'successfully added to queue'})
+            }else{
+            if(api.includes(req.body.endpoint)){
                 res.status(400).json({error:"endpoint already exists or is in queue"})
             }else{
                 createendpoint(req.body.endpoint)
                 res.status(200).json({success:'successfully added to queue'})
-            }
+            }}
         })
+})
+
+app.post(`/adddata`, async (req,res) => {
+    const data = {
+        "endpoint":req.body.endpoint,
+        "data":req.body.data
+    }
+    await db.get(data.endpoint).then(arr => {
+        if(arr.includes(data.data)){
+            res.status(400).json({error:'data already exists in endpoint'})
+        }else{
+            db.push(data.endpoint,data.data)
+            res.status(200).json({success:'data successfully added'})
+        }
     })
 })
 
@@ -49,8 +71,8 @@ app.post(`/createendpoint`,async (req,res) => {
 async function createendpoint(endp){
     db.push(`api`,endp)
     await db.set(endp,[])
-    await db.get(endp).then(data => {
-        app.get(`/${endp}`,(req,res) =>{
+        app.get(`/${endp}`,async (req,res) =>{
+            await db.get(endp).then(data => {
             if(data.length === 0){
              res.status(200).json({success: true,data:null})
             }else{
