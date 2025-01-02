@@ -21,9 +21,10 @@ app.get(`/`,(req,res) =>{
             console.log('no api in db')
         }else{
             for (var i = 0; i < api.length; i++) {
-                app.get(`/${api[i]}`,async (req,res) =>{
-                    await db.get(`${api[i]}`).then(data => {
-                    if(data.length === 0){
+                var end = api[i]
+                app.get(`/${end}`,async (req,res) =>{
+                    await db.get(`${end}`).then(async data => {
+                    if(data.length == 0){
                         res.status(200).json({success: true,data:null})
                     }else{
                         res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
@@ -36,7 +37,6 @@ app.get(`/`,(req,res) =>{
 
 
 app.post(`/createendpoint`,async (req,res) => {
-    console.log(req.body.endpoint)
         db.get("api").then(async api => {
             if(api == null){
                 createendpoint(req.body.endpoint)
@@ -72,7 +72,7 @@ async function createendpoint(endp){
     db.push(`api`,endp)
     await db.set(endp,[])
         app.get(`/${endp}`,async (req,res) =>{
-            await db.get(endp).then(data => {
+            await db.get(endp).then(async data => {
             if(data.length === 0){
              res.status(200).json({success: true,data:null})
             }else{
