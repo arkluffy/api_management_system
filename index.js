@@ -15,26 +15,20 @@ app.get(`/`,(req,res) =>{
 })
 
 // db.set('api',[])
-// db.set('newendpoints',[])
-    await db.get("api").then(async api => {
-        if(api == null){
-            console.log('no api in db')
-        }else{
-            for (var i = 0; i < api.length; i++) {
-                var end = api[i]
-                app.get(`/${end}`,async (req,res) =>{
-                    await db.get(`${end}`).then(async data => {
-                    if(data.length == 0){
-                        res.status(200).json({success: true,data:null})
-                    }else{
-                        res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
-                    }
-                })
-                })
-    }
-        }
-    })
 
+await db.get('api').then( endpoints => {
+    for(var i = 0; i < endpoints.length; i++){
+        app.get(`/${endpoints[i]}`, async (req,res) =>{
+            var requested = req.originalUrl.slice(1)
+            var data = await retrievedata(requested)
+            if(data.length === 0){
+                res.status(200).json({success: true,data:null})
+               }else{
+                   res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
+               }
+        })
+    }
+})
 
 app.post(`/createendpoint`,async (req,res) => {
         db.get("api").then(async api => {
@@ -73,13 +67,20 @@ async function createendpoint(endp){
     await db.set(endp,[])
         app.get(`/${endp}`,async (req,res) =>{
             await db.get(endp).then(async data => {
-            if(data.length === 0){
-             res.status(200).json({success: true,data:null})
-            }else{
-                res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
-            }
+                var requested = req.originalUrl.slice(1)
+                var data = await retrievedata(requested)
+                if(data.length === 0){
+                    res.status(200).json({success: true,data:null})
+                   }else{
+                       res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
+                   }
         })
     })
+}
+
+async function retrievedata(endp){
+    var data = await db.get(endp)
+    return data;
 }
 
 
