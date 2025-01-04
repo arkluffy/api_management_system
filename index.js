@@ -21,6 +21,7 @@ await db.get('api').then( endpoints => {
         app.get(`/${endpoints[i]}`, async (req,res) =>{
             var requested = req.originalUrl.slice(1)
             var data = await retrievedata(requested)
+            console.log(chalk.bgBlue.white.bold(`[/${requested}]`) + ' ' + chalk.green('data successfully provided'))
             if(data.length === 0){
                 res.status(200).json({success: true,data:null})
                }else{
@@ -50,6 +51,7 @@ app.post(`/adddata`, async (req,res) => {
         "endpoint":req.body.endpoint,
         "data":req.body.data
     }
+    console.log(chalk.bgBlue.white.bold(`[${data.endpoint}]` + ' ' + chalk.green(`${data.data}`)))
     await db.get(data.endpoint).then(arr => {
         if(arr.includes(data.data)){
             res.status(400).json({error:'data already exists in endpoint'})
@@ -64,6 +66,7 @@ app.post(`/adddata`, async (req,res) => {
 
 async function createendpoint(endp){
     db.push(`api`,endp)
+    console.log(chalk.bgBlue.white.bold(`[/createendpoint]`) + ' ' + chalk.green(`${endp} created`))
     await db.set(endp,[])
         app.get(`/${endp}`,async (req,res) =>{
             await db.get(endp).then(async data => {
@@ -81,6 +84,7 @@ async function createendpoint(endp){
 async function retrievedata(endp){
     var data = await db.get(endp)
     return data;
+
 }
 
 
