@@ -16,8 +16,10 @@ app.get(`/`,(req,res) =>{
 
 // db.set('api',[])
 
+// create api key system
 await db.get('api').then( endpoints => {
-    for(var i = 0; i < endpoints.length; i++){
+    if(endpoints !== null){
+       for(var i = 0; i < endpoints.length; i++){
         app.get(`/${endpoints[i]}`, async (req,res) =>{
             var requested = req.originalUrl.slice(1)
             var data = await retrievedata(requested)
@@ -28,7 +30,7 @@ await db.get('api').then( endpoints => {
                    res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
                }
         })
-    }
+    }}
 })
 
 app.post(`/createendpoint`,async (req,res) => {
@@ -66,6 +68,7 @@ app.post(`/adddata`, async (req,res) => {
 
 async function createendpoint(endp){
     db.push(`api`,endp)
+    db.set(endp.apikeys,[])
     console.log(chalk.bgBlue.white.bold(`[/createendpoint]`) + ' ' + chalk.green(`${endp} created`))
     await db.set(endp,[])
         app.get(`/${endp}`,async (req,res) =>{
@@ -82,6 +85,7 @@ async function createendpoint(endp){
 }
 
 async function retrievedata(endp){
+    console.log(`a`)
     var data = await db.get(endp)
     return data;
 
