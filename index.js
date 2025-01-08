@@ -49,33 +49,33 @@ app.post(`/createendpoint`,async (req,res) => {
 })
 
 app.post(`/adddata`, async (req,res) => {
-    const data = {
+    const linkdata = {
         "endpoint":req.body.endpoint,
         "data":req.body.data
     }
-    console.log(chalk.bgBlue.white.bold(`[${data.endpoint}]` + ' ' + chalk.green(`${data.data}`)))
-    await db.get(data.endpoint).then(arr => {
-        if(arr.includes(data.data)){
+    console.log(chalk.bgBlue.white.bold(`[${linkdata.endpoint}]` + ' ' + chalk.green(`${linkdata.data}`)))
+    var data = await retrievedata(linkdata.endpoint)
+        if(data.includes(linkdata.data)){
             res.status(400).json({error:'data already exists in endpoint'})
         }else{
-            db.push(data.endpoint,data.data)
+            console.log(linkdata.data)
+            db.push(linkdata.endpoint + ".data",linkdata.data)
             res.status(200).json({success:'data successfully added'})
         }
-    })
 })
 
 
 
 async function createendpoint(endp){
     db.push(`api`,endp)
-    db.set(endp.apikeys,[])
+    
     console.log(chalk.bgBlue.white.bold(`[/createendpoint]`) + ' ' + chalk.green(`${endp} created`))
-    await db.set(endp,[])
+    await db.set(endp,{apikeys:[],data:[null]})
         app.get(`/${endp}`,async (req,res) =>{
-            await db.get(endp).then(async data => {
+            await db.get(endp.data).then(async data => {
                 var requested = req.originalUrl.slice(1)
                 var data = await retrievedata(requested)
-                if(data.length === 0){
+                if(data === null){
                     res.status(200).json({success: true,data:null})
                    }else{
                        res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
@@ -85,8 +85,9 @@ async function createendpoint(endp){
 }
 
 async function retrievedata(endp){
-    console.log(`a`)
-    var data = await db.get(endp)
+    console.log(endp)
+    var data = await db.get(endp + ".data")
+    console.log(data)
     return data;
 
 }
@@ -95,3 +96,4 @@ async function retrievedata(endp){
 app.listen(port,() =>{
     console.log(chalk.bgBlue.white.bold(`[${port}]`) + ' ' + chalk.green(`http://localhost:${port}`))
 })
+
