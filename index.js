@@ -48,6 +48,16 @@ app.post(`/createendpoint`,async (req,res) => {
         })
 })
 
+app.post(`/generateapikey`, (req,res) => {
+    const retrieveddata = {
+        "endp": req.body.endpoint
+    }
+    var apikey = Math.random().toString(36).substr(2,50)
+    db.push(`${retrievedata.endp}.apikeys`,apikey)
+    console.log(apikey)
+    res.status(200).json({success:"api key successfully added", apikey})
+})
+
 app.post(`/adddata`, async (req,res) => {
     const linkdata = {
         "endpoint":req.body.endpoint,
@@ -70,7 +80,7 @@ async function createendpoint(endp){
     db.push(`api`,endp)
     
     console.log(chalk.bgBlue.white.bold(`[/createendpoint]`) + ' ' + chalk.green(`${endp} created`))
-    await db.set(endp,{apikeys:[],data:[null]})
+    await db.set(endp,{apikeys:[],data:[]})
         app.get(`/${endp}`,async (req,res) =>{
             await db.get(endp.data).then(async data => {
                 var requested = req.originalUrl.slice(1)
@@ -91,7 +101,6 @@ async function retrievedata(endp){
     return data;
 
 }
-
 
 app.listen(port,() =>{
     console.log(chalk.bgBlue.white.bold(`[${port}]`) + ' ' + chalk.green(`http://localhost:${port}`))
