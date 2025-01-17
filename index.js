@@ -81,9 +81,9 @@ async function createendpoint(endp){
     db.push(`api`,endp)
     
     console.log(chalk.bgBlue.white.bold(`[/createendpoint]`) + ' ' + chalk.green(`${endp} created`))
-    await db.set(endp,{apikeys:[],data:['test']})
+    await db.set(endp,{apikeys:[],data:[]})
         app.get(`/${endp}`,async (req,res) =>{
-            await db.get(endp.data).then(async data => {
+            await db.get(endp + ".data").then(async data => {
                 var requested = req.originalUrl.slice(1)
                 var data = await retrievedata(requested)
                 if(data === null){
