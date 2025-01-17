@@ -52,11 +52,12 @@ app.post(`/generateapikey`, (req,res) => {
     const retrieveddata = {
         "endp": req.body.endpoint
     }
-    var apikey = Math.random().toString(36).substr(2,50)
-    db.push(`${retrievedata.endp}.apikeys`,apikey)
+    var apikey = generatestring(50)
+    db.push(`${retrieveddata.endp}.apikeys`,apikey)
     console.log(apikey)
     res.status(200).json({success:"api key successfully added", apikey})
 })
+
 
 app.post(`/adddata`, async (req,res) => {
     const linkdata = {
@@ -80,7 +81,7 @@ async function createendpoint(endp){
     db.push(`api`,endp)
     
     console.log(chalk.bgBlue.white.bold(`[/createendpoint]`) + ' ' + chalk.green(`${endp} created`))
-    await db.set(endp,{apikeys:[],data:[]})
+    await db.set(endp,{apikeys:[],data:['test']})
         app.get(`/${endp}`,async (req,res) =>{
             await db.get(endp.data).then(async data => {
                 var requested = req.originalUrl.slice(1)
@@ -100,6 +101,16 @@ async function retrievedata(endp){
     console.log(data)
     return data;
 
+}
+
+function generatestring(length){
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    var apikey = ""
+    const charactersLength = letters.length;
+    for ( let i = 0; i < length; i++ ) {
+        apikey += letters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return apikey
 }
 
 app.listen(port,() =>{
