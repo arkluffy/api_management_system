@@ -1,5 +1,12 @@
 import axios from "axios"
-import db from "./index.js"
-import QuickDB from "quick.db"
 
-db.push('facts','whatttuppp')
+
+await axios.get('http://localhost:3000/1', {
+    headers: {
+        'Authorization': 'F1kZ11km0Xk7AtOfLQdZyCH7VbXSbyFvJb0KRga6DOuuCMnze'
+    }
+})
+.then((res) => {
+    console.log(res.data)
+})
+.catch((err) => console.error(err));

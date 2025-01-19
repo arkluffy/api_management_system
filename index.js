@@ -16,19 +16,35 @@ app.get(`/`,(req,res) =>{
 
 // db.set('api',[])
 
-// create api key system
 await db.get('api').then( endpoints => {
     if(endpoints !== null){
        for(var i = 0; i < endpoints.length; i++){
         app.get(`/${endpoints[i]}`, async (req,res) =>{
             var requested = req.originalUrl.slice(1)
             var data = await retrievedata(requested)
+            var keys = await retrievekeys(requested)
+            console.log(keys)
+            if(keys = []){
+                console.log('ok')
+                if(data.length === 0){
+                    res.status(200).json({success: true,data:null})
+                   }else{
+                       res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
+                   }
+            }else{
+                var authorization_key = req.headers.authorization
+                console.log(authorization_key)
+                if(keys.includes(authorization_key)){
+                    if(data.length === 0){
+                        res.status(200).json({success: true,data:null})
+                       }else{
+                           res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
+                       }
+                }else{
+                    res.status(203).json({error:"requires api key in headers"})
+                }
+            }
             console.log(chalk.bgBlue.white.bold(`[/${requested}]`) + ' ' + chalk.green('data successfully provided'))
-            if(data.length === 0){
-                res.status(200).json({success: true,data:null})
-               }else{
-                   res.status(200).json({success: true,data:data[Math.floor(Math.random() * data.length)]})
-               }
         })
     }}
 })
@@ -98,9 +114,13 @@ async function createendpoint(endp){
 async function retrievedata(endp){
     console.log(endp)
     var data = await db.get(endp + ".data")
-    console.log(data)
     return data;
 
+}
+
+async function retrievekeys(endp){
+    var data = await db.get(endp + ".apikeys")
+    return data
 }
 
 function generatestring(length){
